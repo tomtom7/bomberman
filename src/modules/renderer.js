@@ -1,6 +1,8 @@
 import Grid from "./grid"
 
 let canvas = document.getElementById("game-canvas");
+import ResourceLoader from "./resourceloader";
+
 let scoreBox = document.getElementById("score-box")
 let ctx = canvas.getContext("2d");
 
@@ -8,6 +10,8 @@ class Renderer {
 
 	constructor(options) {
 		this.grid = new Grid(options);
+		this.scale = this.grid.options.scale;
+		this.resources = new ResourceLoader(['../img/wall.jpg'], this.draw);
 	}
 
 	_clearCanvas() {
@@ -33,28 +37,15 @@ class Renderer {
 	    ctx.stroke(); 
 	}
 
-
-	_renderBlock(block) {
-		ctx.beginPath();
-		ctx.rect(block.x, block.y, block.scale, block.scale);
-		ctx.fillStyle = block.color;
-		ctx.fill();
-
-		ctx.strokeStyle = "#FFFFFF";
-		ctx.lineWidth = 1;
-		ctx.stroke();
-		ctx.closePath();
-	}
-
-	_renderBlocks(blocks) {
-		ctx.save();
-		blocks.forEach(b => this._renderBlock(b));
-		ctx.restore();
+	draw() {
+	  console.log("loaded");
+	  ctx.drawImage(this.resources.images[0], 0, 0, this.scale, this.scale);
 	}
 
 	render() {
-		this._clearCanvas();
+		//this._clearCanvas();
 		this._drawGrid(this.grid.options.scale);
+		//this.draw();
 	}
 }
 

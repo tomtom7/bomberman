@@ -8,19 +8,31 @@ module.exports = {
     filename: 'dist/bundle.js'
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      include: [
-        path.resolve(__dirname, "src")
-      ],
-      use: [{
-        loader: 'babel-loader',
+    rules: [
+      {
+        test: /\.js$/,
+        include: [
+          path.resolve(__dirname, "src")
+        ],
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['es2015', { modules: false }]
+            ]
+          }
+        }]
+      },
+      {
+        test: /\.(?:png|jpg|svg)$/,
+        include: [
+          path.resolve(__dirname, 'src/img')
+        ],
+        loader: 'file-loader',
         options: {
-          presets: [
-            ['es2015', { modules: false }]
-          ]
+          name: '[path][name].[ext]'
         }
-      }]
-    }]
+      }
+    ]
   }
 }
