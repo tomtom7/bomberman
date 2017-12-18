@@ -1,28 +1,24 @@
 import Grid from "./grid"
 
 let canvas = document.getElementById("game-canvas");
-import ResourceLoader from "./resourceloader";
-
-let scoreBox = document.getElementById("score-box")
 let ctx = canvas.getContext("2d");
 
 class Renderer {
 
-	constructor(options) {
+	constructor(options, resources) {
 		this.grid = new Grid(options);
-		this.scale = this.grid.options.scale;
-		this.resources = new ResourceLoader(['../img/wall.jpg'], this.draw);
+		this.resources = resources;
 	}
 
 	_clearCanvas() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	}
 
-	_drawGrid(scale) {
+	_drawGrid() {
 	    ctx.beginPath();
 	    ctx.lineWidth = 0.15;
 	    ctx.strokeStyle = '#000000';
-	    for (let x = 0; x <= canvas.width; x += scale) {
+	    for (let x = 0; x <= canvas.width; x += this.grid.options.tileScale) {
             ctx.moveTo(x, 0);
             ctx.lineTo(x, canvas.height);
 	    }
@@ -30,22 +26,30 @@ class Renderer {
 	    ctx.stroke(); 
 
 	    ctx.beginPath();
-	    for (let y = 0; y <= canvas.height; y += scale) {
+	    for (let y = 0; y <= canvas.height; y += this.grid.options.tileScale) {
             ctx.moveTo(0, y);
             ctx.lineTo(canvas.width, y);
 	    }
 	    ctx.stroke(); 
 	}
 
-	draw() {
-	  console.log("loaded");
-	  ctx.drawImage(this.resources.images[0], 0, 0, this.scale, this.scale);
+	drawRocks() {
+	  this.grid.rocks.forEach(rock => this.drawRock(rock));
+	}
+
+	drawRock(rock) {
+		ctx.drawImage(this.resources.rock, rock.x, rock.y, this.grid.options.tileScale, this.grid.options.tileScale);
+	}
+
+	drawPlayer() {
+	  ctx.fillRect(this.grid.player.x, this.grid.player.y, this.grid.options.playerScale, this.grid.options.playerScale);
 	}
 
 	render() {
-		//this._clearCanvas();
-		this._drawGrid(this.grid.options.scale);
-		//this.draw();
+		this._clearCanvas();
+		this._drawGrid();
+		this.drawPlayer();
+		this.drawRocks();
 	}
 }
 

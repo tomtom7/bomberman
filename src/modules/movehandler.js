@@ -1,8 +1,8 @@
 
 class MoveHandler {
-	constructor(renderer) {
-		this.renderer = renderer;
-		this.grid = renderer.grid;
+	constructor(grid, speed) {
+		this.grid = grid;
+		this.speed = speed;
 		this.keys = [];
 		document.addEventListener("keyup", (e) => this._removeKey(e)); 
 		document.addEventListener("keydown", (e) => this._saveKey(e));
@@ -26,54 +26,50 @@ class MoveHandler {
 
 	_saveKey(e) {
 		this.keys[e.keyCode] = true;
-		this._checkMovement();
 	}
 
 	_removeKey(e) {
 		this.keys[e.keyCode] = false;
 	}
 
-	_checkLeftMovement() {
-		if (this._isLeft()) {
-            //this.grid.currentShape.move(LEFT);
+	_checkLeftMovement(dt) {
+		let newX = this.grid.player.x - this.getDistanceTravelled(dt);
+
+		if (this._isLeft() && this.grid.canMove(newX, this.grid.player.y)) {
+            this.grid.player.x = newX;
         } 
 	}
 
-	_checkRightMovement() {
-        if (this._isRight()) {
-            //this.grid.currentShape.move(RIGHT);
-        }
+	getDistanceTravelled(dt) {
+		return this.speed * dt;
 	}
 
-	_checkTopMovement() {
-        if (this._isTop()) {
-            //this.grid.currentShape.rotate();
-        }
-	}
-
-	_checkDownMovement() {
-		if (this._isDown()) {
-			//this.tickDown();
-        }
-	}
-
-
-    _checkGameOver() {
-		if (!this._canMoveDown()) {
-			//this.grid.reset();
+	_checkRightMovement(dt) {
+		let newX = this.grid.player.x + this.getDistanceTravelled(dt);
+	    if (this._isRight() && this.grid.canMove(newX, this.grid.player.y)) { 
+	        this.grid.player.x = newX;
 		}
 	}
 
-	_canMoveDown() {
-		//return this.grid.currentShape.canMove(DOWN, this.grid.blocks)
+	_checkTopMovement(dt) {
+		let newY = this.grid.player.y - this.getDistanceTravelled(dt);
+        if (this._isTop() && this.grid.canMove(this.grid.player.x, newY)) {
+        	this.grid.player.y = newY;
+        }
 	}
 
-	_checkMovement() {
-		this._checkTopMovement();
-		this._checkLeftMovement();
-		this._checkRightMovement();
-		this._checkDownMovement();
-		this.renderer.render();
+	_checkDownMovement(dt) {
+		let newY = this.grid.player.y + this.getDistanceTravelled(dt);
+		if (this._isDown() && this.grid.canMove(this.grid.player.x, newY)) {
+			this.grid.player.y = newY;
+        }
+	}
+
+	handleInput(dt) {
+		this._checkTopMovement(dt);
+		this._checkLeftMovement(dt);
+		this._checkRightMovement(dt);
+		this._checkDownMovement(dt);
     }
 }
 

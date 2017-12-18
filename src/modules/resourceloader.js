@@ -1,31 +1,25 @@
 class ResourceLoader {
 
-    constructor(sources, callback) {
-        this.sources = sources;
-        this.images = [];
-        this.callback = callback;
-        this.loadedImageCount = 0;
-        this._load();
-    }
+    static load(sources, callback) {
+        let images = {};
+        let loadedImages = 0;
+        let keys = Object.keys(sources);
+        let numImages = keys.length;
 
-    _load() {
-        this.sources.forEach(source => {
-            let img = new Image();
-            img.onload = this._imageLoaded;
-            img.src = source;
-            this.images.push(img);
+        keys.forEach(key => {
+            images[key] = new Image();
+            images[key].src = sources[key];
+            images[key].onload = () => {
+                loadedImages++;
+                if (loadedImages >= numImages) {
+                    callback(images);
+                }
+            }
+            images[key].onerror = () => {
+                console.log("Error loading: " + sources[key]);
+            }
         });
-        console.log(this.images);
     }
-
-
-    _imageLoaded() {
-        this.loadedImageCount++;
-        if (this.loadedImageCount >= this.sources.length) {
-            this.callback();
-        }
-    }
-
 }
 
 export default ResourceLoader;

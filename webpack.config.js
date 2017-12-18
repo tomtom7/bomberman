@@ -1,11 +1,13 @@
 const path = require('path')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
   entry: './game.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'dist/bundle.js'
+    filename: "bundle.js",
+    publicPath: '/'
   },
   module: {
     rules: [
@@ -23,16 +25,11 @@ module.exports = {
           }
         }]
       },
-      {
-        test: /\.(?:png|jpg|svg)$/,
-        include: [
-          path.resolve(__dirname, 'src/img')
-        ],
-        loader: 'file-loader',
-        options: {
-          name: '[path][name].[ext]'
-        }
-      }
     ]
-  }
+  },
+  plugins: [
+    new CopyWebpackPlugin([
+      { from: 'images', to: './img' }
+    ]),
+  ]
 }
