@@ -1,22 +1,21 @@
 import Player from "./player";
 import Rock from "./rock";
 
-let canvas = document.getElementById("game-canvas");
-
 class Grid {
 
-	constructor(options) {
-        this.options = options
-        this.player = new Player(30, 30);
+    constructor(options, canvas) {
+        this.options = options;
+        this.canvas = canvas;
+        this.player = new Player(16, 0, this.options.playerScale);
         this.rocks = this.createRocks();
-	}
+    }
 
     createRocks() {
         let rocks = [];
 
-        for (let i = 1; i <= canvas.width / 90; i +=2 ) {
-            for (let j = 0; j <= canvas.height / 90; j +=2 ) {
-                rocks.push(new Rock(i * 90, j * 90));
+        for (let i = 1; i <= this.canvas.width / this.options.tileScale; i += 2) {
+            for (let j = 1; j <= this.canvas.height / this.options.tileScale; j += 2) {
+                rocks.push(new Rock(i * this.options.tileScale, j * this.options.tileScale));
             }
         }
 
@@ -24,11 +23,11 @@ class Grid {
     }
 
     canMove(x, y) {
-        return x >= 0 && 
-        x <= canvas.width - this.options.playerScale && 
-        y >= 0 && 
-        y <= canvas.height - this.options.playerScale &&
-        !this.collidesWithRocks(x, y);
+        return x >= 0 &&
+            x <= this.canvas.width - this.player.w &&
+            y >= 0 &&
+            y <= this.canvas.height - this.player.h &&
+            !this.collidesWithRocks(x, y);
     }
 
     collidesWithRocks(x, y) {
@@ -37,9 +36,9 @@ class Grid {
 
     collides(rock, x, y) {
         return x < rock.x + this.options.tileScale &&
-        x + this.options.playerScale > rock.x &&
-        y < rock.y + this.options.tileScale &&
-        y + this.options.playerScale > rock.y;
+            x + this.player.w > rock.x &&
+            y < rock.y + this.options.tileScale &&
+            y + this.player.h > rock.y;
     }
 }
 

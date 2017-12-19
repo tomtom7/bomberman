@@ -1,4 +1,5 @@
 import Grid from "./grid"
+import spritesJSON from './../images/sprites.json';
 
 let canvas = document.getElementById("game-canvas");
 let ctx = canvas.getContext("2d");
@@ -6,7 +7,7 @@ let ctx = canvas.getContext("2d");
 class Renderer {
 
 	constructor(options, resources) {
-		this.grid = new Grid(options);
+		this.grid = new Grid(options, canvas);
 		this.resources = resources;
 	}
 
@@ -15,34 +16,40 @@ class Renderer {
 	}
 
 	_drawGrid() {
-	    ctx.beginPath();
-	    ctx.lineWidth = 0.15;
-	    ctx.strokeStyle = '#000000';
-	    for (let x = 0; x <= canvas.width; x += this.grid.options.tileScale) {
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, canvas.height);
-	    }
+		ctx.beginPath();
+		ctx.lineWidth = 0.15;
+		ctx.strokeStyle = '#000000';
+		for (let x = 0; x <= canvas.width; x += this.grid.options.tileScale) {
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x, canvas.height);
+		}
 
-	    ctx.stroke(); 
+		ctx.stroke();
 
-	    ctx.beginPath();
-	    for (let y = 0; y <= canvas.height; y += this.grid.options.tileScale) {
-            ctx.moveTo(0, y);
-            ctx.lineTo(canvas.width, y);
-	    }
-	    ctx.stroke(); 
+		ctx.beginPath();
+		for (let y = 0; y <= canvas.height; y += this.grid.options.tileScale) {
+			ctx.moveTo(0, y);
+			ctx.lineTo(canvas.width, y);
+		}
+		ctx.stroke();
 	}
 
 	drawRocks() {
-	  this.grid.rocks.forEach(rock => this.drawRock(rock));
+		this.grid.rocks.forEach(rock => this.drawRock(rock));
 	}
 
 	drawRock(rock) {
-		ctx.drawImage(this.resources.rock, rock.x, rock.y, this.grid.options.tileScale, this.grid.options.tileScale);
+		let frame = this.getFrame("hard.png");
+		ctx.drawImage(this.resources.sprites, frame.x, frame.y, frame.w, frame.h, rock.x, rock.y, this.grid.options.tileScale, this.grid.options.tileScale);
 	}
 
 	drawPlayer() {
-	  ctx.fillRect(this.grid.player.x, this.grid.player.y, this.grid.options.playerScale, this.grid.options.playerScale);
+		let frame = this.getFrame(this.grid.player.getFrame());
+		ctx.drawImage(this.resources.sprites, frame.x, frame.y, frame.w, frame.h, this.grid.player.x, this.grid.player.y, this.grid.player.w, this.grid.player.h);
+	}
+
+	getFrame(frameName) {
+		return spritesJSON.frames[frameName].frame;
 	}
 
 	render() {

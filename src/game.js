@@ -1,7 +1,7 @@
 import Renderer from "./modules/renderer";
 import MoveHandler from "./modules/movehandler";
 import ResourceLoader from "./modules/resourceloader";
-import rockPNG from './images/rock.png';
+import spritesPNG from './images/sprites.png';
 
 class Game {
     constructor(options, resources) {
@@ -14,7 +14,7 @@ class Game {
         let currentTime = Date.now();
         let dt = (currentTime - this.lastTime) / 1000;
 
-        this.moveHandler.handleInput(dt);  
+        this.moveHandler.handleInput(dt);
         this.renderer.render();
         this.lastTime = currentTime;
         requestAnimationFrame(() => this.main());
@@ -27,17 +27,15 @@ class Game {
 }
 
 let options = {
-    tileScale: 90,
-    playerScale: 30,
-    speed: 600
+    tileScale: 64,
+    playerScale: 64,
+    speed: 300
 }
 
 let sources = {
-    rock: '/dist' + rockPNG
+    sprites: spritesPNG
 }
 
-ResourceLoader.load(sources, start);
-
-function start(resources) {
+ResourceLoader.load(sources).then(resources => {
     new Game(options, resources);
-}
+});
