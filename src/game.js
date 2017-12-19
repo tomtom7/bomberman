@@ -1,11 +1,12 @@
 import Renderer from "./modules/renderer";
 import MoveHandler from "./modules/movehandler";
 import ResourceLoader from "./modules/resourceloader";
+import rockPNG from './images/rock.png';
 
 class Game {
     constructor(options, resources) {
         this.renderer = new Renderer(options, resources);
-        this.moveHandler = new MoveHandler(this.renderer.grid, this.options.speed);
+        this.moveHandler = new MoveHandler(this.renderer.grid, options.speed);
         this.start();
     }
 
@@ -32,7 +33,7 @@ let options = {
 }
 
 let sources = {
-    rock: "/img/rock.png"
+    rock: '/dist' + rockPNG
 }
 
 ResourceLoader.load(sources, start);
