@@ -14,7 +14,7 @@ class Game {
         let currentTime = Date.now();
         let dt = (currentTime - this.lastTime) / 1000;
 
-        this.moveHandler.handleInput(dt);
+        this.moveHandler.handlePlayerInput(dt);
         this.renderer.render();
         this.lastTime = currentTime;
         requestAnimationFrame(() => this.main());
@@ -28,7 +28,6 @@ class Game {
 
 let options = {
     tileScale: 64,
-    playerScale: 64,
     speed: 300
 }
 

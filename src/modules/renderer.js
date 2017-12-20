@@ -34,29 +34,25 @@ class Renderer {
 		ctx.stroke();
 	}
 
-	drawRocks() {
-		this.grid.rocks.forEach(rock => this.drawRock(rock));
+	_drawEntity(entity) {
+		let sprite = this._getFrame(entity.sprite.frameName);
+		ctx.drawImage(this.resources.sprites, sprite.x, sprite.y, sprite.w, sprite.h, entity.x, entity.y, entity.w, entity.h);
 	}
 
-	drawRock(rock) {
-		let frame = this.getFrame("hard.png");
-		ctx.drawImage(this.resources.sprites, frame.x, frame.y, frame.w, frame.h, rock.x, rock.y, this.grid.options.tileScale, this.grid.options.tileScale);
+	_drawEntities(entities) {
+		entities.forEach(entity => this._drawEntity(entity));
 	}
 
-	drawPlayer() {
-		let frame = this.getFrame(this.grid.player.getFrame());
-		ctx.drawImage(this.resources.sprites, frame.x, frame.y, frame.w, frame.h, this.grid.player.x, this.grid.player.y, this.grid.player.w, this.grid.player.h);
-	}
-
-	getFrame(frameName) {
+	_getFrame(frameName) {
 		return spritesJSON.frames[frameName].frame;
 	}
 
 	render() {
 		this._clearCanvas();
 		this._drawGrid();
-		this.drawPlayer();
-		this.drawRocks();
+		this._drawEntities(this.grid.blocks);
+		this._drawEntities(this.grid.bombs);
+		this._drawEntity(this.grid.player);
 	}
 }
 

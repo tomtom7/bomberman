@@ -13,81 +13,97 @@ class MoveHandler {
 			65: "left",
 			37: "left",
 			68: "right",
-			39: "right"
+			39: "right",
+			32: "bomb"
 		}
 		this.directions = [];
 	}
 
-	_isTop() {
-		return this.directions.includes("up");
+	_isUp() {
+		return this._isDirection("up");
 	}
 
 	_isDown() {
-		return this.directions.includes("down");
+		return this._isDirection("down");
 	}
 
 	_isLeft() {
-		return this.directions.includes("left");
+		return this._isDirection("left");
 	}
 
 	_isRight() {
-		return this.directions.includes("right");
+		return this._isDirection("right");
+	}
+
+	_isDirection(direction) {
+		return this.directions.includes(direction);
+	}
+
+	_isBomb() {
+		return this._isDirection("bomb");
 	}
 
 	_saveKey(e) {
 		let direction = this.keyMap[e.keyCode];
-		if (direction && !this.directions.includes(direction)) {
+		if (direction && !this._isDirection(direction)) {
 			this.directions.push(direction);
 		}
 	}
 
 	_removeKey(e) {
-		this.directions = this.directions.filter(d => d !== this.keyMap[e.keyCode]);
-		this.grid.player.resetFrame();
+		if (this.directions.length > 0) {
+			this.directions = this.directions.filter(d => d !== this.keyMap[e.keyCode]);
+		}
+		this.grid.player.sprite.reset();
 	}
 
 	_checkLeftMovement(dt) {
-		let newX = this.grid.player.x - this.getDistanceTravelled(dt);
+		let newX = this.grid.player.x - this._getDistanceTravelled(dt);
 
-		if (this._isLeft() && this.grid.canMove(newX, this.grid.player.y)) {
+		if (this._isLeft() && this.grid.canMove(newX, this.grid.player.y, this.grid.player.w, this.grid.player.h, true)) {
 			this.grid.player.x = newX;
 		}
 	}
 
-	getDistanceTravelled(dt) {
+	_getDistanceTravelled(dt) {
 		return this.speed * dt;
 	}
 
 	_checkRightMovement(dt) {
-		let newX = this.grid.player.x + this.getDistanceTravelled(dt);
-		if (this._isRight() && this.grid.canMove(newX, this.grid.player.y)) {
+		let newX = this.grid.player.x + this._getDistanceTravelled(dt);
+		if (this._isRight() && this.grid.canMove(newX, this.grid.player.y, this.grid.player.w, this.grid.player.h, true)) {
 			this.grid.player.x = newX;
 		}
 	}
 
-	_checkTopMovement(dt) {
-		let newY = this.grid.player.y - this.getDistanceTravelled(dt);
-		if (this._isTop() && this.grid.canMove(this.grid.player.x, newY)) {
+	_checkUpMovement(dt) {
+		let newY = this.grid.player.y - this._getDistanceTravelled(dt);
+		if (this._isUp() && this.grid.canMove(this.grid.player.x, newY, this.grid.player.w, this.grid.player.h, true)) {
 			this.grid.player.y = newY;
 		}
 	}
 
 	_checkDownMovement(dt) {
-		let newY = this.grid.player.y + this.getDistanceTravelled(dt);
-		if (this._isDown() && this.grid.canMove(this.grid.player.x, newY)) {
+		let newY = this.grid.player.y + this._getDistanceTravelled(dt);
+		if (this._isDown() && this.grid.canMove(this.grid.player.x, newY, this.grid.player.w, this.grid.player.h, true)) {
 			this.grid.player.y = newY;
 		}
 	}
 
-	setPlayerFrame(dt) {
+	_setPlayerFrame(dt) {
 		if (this.directions.length > 0) {
-			this.grid.player.setActiveFrame(dt, this.directions[0]);
+			this.grid.player.sprite.update(dt, this.directions[0]);
 		}
+
+		if (this._isBomb()) {
+			this.grid.createBomb(dt);
+		}
+		this.grid.bombs.forEach(bomb => bomb.sprite.update(dt));
 	}
 
-	handleInput(dt) {
-		this.setPlayerFrame(dt);
-		this._checkTopMovement(dt);
+	handlePlayerInput(dt) {
+		this._setPlayerFrame(dt);
+		this._checkUpMovement(dt);
 		this._checkLeftMovement(dt);
 		this._checkRightMovement(dt);
 		this._checkDownMovement(dt);

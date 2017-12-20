@@ -1,44 +1,61 @@
 import Player from "./player";
-import Rock from "./rock";
+import Bomb from "./bomb";
+import Block from "./block/block"
+import RockBlock from "./block/rock";
+import FreeBlock from "./block/free";
+import SoftBlock from "./block/soft";
 
 class Grid {
 
     constructor(options, canvas) {
         this.options = options;
         this.canvas = canvas;
-        this.player = new Player(16, 0, this.options.playerScale);
-        this.rocks = this.createRocks();
+        this.player = new Player(16, 0);
+        this.blocks = this.createBlocks();
+        this.bombs = [];
     }
 
-    createRocks() {
-        let rocks = [];
+    createBomb() {
+        this.bombs.push(new Bomb(64, 0));
+    }
 
-        for (let i = 1; i <= this.canvas.width / this.options.tileScale; i += 2) {
-            for (let j = 1; j <= this.canvas.height / this.options.tileScale; j += 2) {
-                rocks.push(new Rock(i * this.options.tileScale, j * this.options.tileScale));
+    createBlocks() {
+        let blocks = [];
+        let values = [1, 3, 5, 7, 9, 11];
+
+        for (let x = 0; x <= this.canvas.width / this.options.tileScale; x++) {
+            for (let y = 0; y <= this.canvas.height/ this.options.tileScale; y++) {
+                if (x < 3 && y == 0 || y < 3 && x == 0 ) {
+                    blocks.push(new FreeBlock(x * this.options.tileScale, y * this.options.tileScale, this.options.tileScale, this.options.tileScale));
+                } else if (values.includes(y)  && values.includes(x) ){
+                    blocks.push(new RockBlock(x * this.options.tileScale, y * this.options.tileScale, this.options.tileScale, this.options.tileScale))            
+                } else {
+                     blocks.push(new SoftBlock(x * this.options.tileScale, y * this.options.tileScale, this.options.tileScale, this.options.tileScale));
+                }
             }
         }
-
-        return rocks;
+        return blocks;
     }
 
-    canMove(x, y) {
-        return x >= 0 &&
-            x <= this.canvas.width - this.player.w &&
-            y >= 0 &&
-            y <= this.canvas.height - this.player.h &&
-            !this.collidesWithRocks(x, y);
+    canMove(x, y, w, h, collideable) {
+        let block = new Block(x, y, w, h, collideable);
+        return block.x >= 0 &&
+            block.x <= this.canvas.width - block.w &&
+            block.y >= 0 &&
+            block.y <= this.canvas.height - block.h &&
+            (!block.collideable || !this.collidesWithBlocks(block));
     }
 
-    collidesWithRocks(x, y) {
-        return this.rocks.some(rock => this.collides(rock, x, y));
+    collidesWithBlocks(block) {
+        return this.blocks.some(otherBlock => this.collides(block, otherBlock));
     }
 
-    collides(rock, x, y) {
-        return x < rock.x + this.options.tileScale &&
-            x + this.player.w > rock.x &&
-            y < rock.y + this.options.tileScale &&
-            y + this.player.h > rock.y;
+    collides(block, otherBlock) {
+        return otherBlock.collideable &&
+            block.x < otherBlock.x + otherBlock.w &&
+            block.x + block.w > otherBlock.x &&
+            block.y < otherBlock.y + otherBlock.h &&
+            block.y + block.h > otherBlock.y;
     }
 }
 
