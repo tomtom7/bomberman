@@ -15,6 +15,7 @@ class Game {
         let dt = (currentTime - this.lastTime) / 1000;
 
         this.moveHandler.handlePlayerInput(dt);
+        this.moveHandler.updateAnimations(dt);
         this.renderer.render();
         this.lastTime = currentTime;
         requestAnimationFrame(() => this.main());

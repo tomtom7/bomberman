@@ -1,19 +1,26 @@
-import Block from './block/block';
+import Block from './block';
 import AnimatedSprite from './animatedsprite';
-
-const frames = {
-	down: "Front/b_front_{index}.png",
-	right: "Right/b_right_{index}.png",
-	left: "Left/b_left_{index}.png",
-	up: "Back/b_back_{index}.png"
-}
 
 class Player extends Block {
 
-	constructor(x = 0, y = 0) {
+	constructor(x = 0, y = 0, playerSprite) {
 		//w && h scaled down 1.6
 		super(x, y, 31, 55, true);
-		this.sprite = new AnimatedSprite(frames, frames.down, 8, 16);
+		this.sprite = new AnimatedSprite(playerSprite, playerSprite.down, 16, true);
+		this.bombs = [];
+		this.explosions = [];
+	}
+
+	canPlantBomb() {
+		return this.bombs.length == 0;
+	}
+
+	removeBombs() {
+		this.bombs = [];
+	}
+
+	removeExplosions() {
+		this.explosions = [];
 	}
 }
 

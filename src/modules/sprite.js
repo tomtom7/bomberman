@@ -1,8 +1,8 @@
-class StaticSprite {
+class Sprite {
 
 	constructor(frameName) {
 		this.frameName = frameName;
 	}
 }
 
-export default StaticSprite;
+export default Sprite;

@@ -17,6 +17,7 @@ class MoveHandler {
 			32: "bomb"
 		}
 		this.directions = [];
+		this.actions = [];
 	}
 
 	_isUp() {
@@ -39,20 +40,27 @@ class MoveHandler {
 		return this.directions.includes(direction);
 	}
 
-	_isBomb() {
-		return this._isDirection("bomb");
+	_isBombPlant() {
+		return this.actions.includes("bomb");
 	}
 
 	_saveKey(e) {
-		let direction = this.keyMap[e.keyCode];
-		if (direction && !this._isDirection(direction)) {
-			this.directions.push(direction);
+		let action = this.keyMap[e.keyCode];
+
+		if (action == 'bomb') {
+			this.actions.push(action);
+		} else if(action && !this._isDirection(action)) {
+			this.directions.push(action);
 		}
 	}
 
 	_removeKey(e) {
 		if (this.directions.length > 0) {
 			this.directions = this.directions.filter(d => d !== this.keyMap[e.keyCode]);
+		}
+
+		if(this.actions.length > 0) {
+			this.actions = this.actions.filter(d => d !== this.keyMap[e.keyCode])
 		}
 		this.grid.player.sprite.reset();
 	}
@@ -90,23 +98,33 @@ class MoveHandler {
 		}
 	}
 
-	_setPlayerFrame(dt) {
+	_updatePlayerAnimation(dt) {
 		if (this.directions.length > 0) {
 			this.grid.player.sprite.update(dt, this.directions[0]);
 		}
+	}
 
-		if (this._isBomb()) {
-			this.grid.createBomb(dt);
+	_checkBombPlant(dt) {
+		if (this._isBombPlant() && this.grid.player.canPlantBomb()) {
+			this.grid.addBomb();
 		}
-		this.grid.bombs.forEach(bomb => bomb.sprite.update(dt));
 	}
 
 	handlePlayerInput(dt) {
-		this._setPlayerFrame(dt);
 		this._checkUpMovement(dt);
 		this._checkLeftMovement(dt);
 		this._checkRightMovement(dt);
 		this._checkDownMovement(dt);
+		this._checkBombPlant(dt);
+	}
+
+	updateAnimations(dt) {
+		if (this.directions.length > 0) {
+			this.grid.player.sprite.update(dt, this.directions[0]);
+		}
+
+		this.grid.player.bombs.forEach(bomb => bomb.sprite.update(dt));
+		this.grid.player.explosions.forEach(explosion => explosion.sprite.update(dt));
 	}
 }
 

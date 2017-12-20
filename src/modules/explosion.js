@@ -1,7 +1,7 @@
 import Block from './block';
 import AnimatedSprite from './animatedsprite';
 
-class Bomb extends Block {
+class Explosion extends Block {
 
 	constructor(x = 0, y = 0, spriteName) {
 		super(x, y, 48, 48, true);
@@ -9,4 +9,4 @@ class Bomb extends Block {
 	}
 }
 
-export default Bomb;
+export default Explosion;

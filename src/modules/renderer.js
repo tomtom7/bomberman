@@ -51,7 +51,8 @@ class Renderer {
 		this._clearCanvas();
 		this._drawGrid();
 		this._drawEntities(this.grid.blocks);
-		this._drawEntities(this.grid.bombs);
+		this._drawEntities(this.grid.player.bombs);
+		this._drawEntities(this.grid.player.explosions);
 		this._drawEntity(this.grid.player);
 	}
 }
