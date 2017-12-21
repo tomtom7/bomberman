@@ -1,5 +1,4 @@
 class Sprite {
-
 	constructor(frameName) {
 		this.frameName = frameName;
 	}

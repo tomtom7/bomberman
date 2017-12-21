@@ -1,13 +1,11 @@
 class AnimatedSprite {
-
-	constructor(frames, activeFrame, speed, directional) {
-		this.directional = directional;
+	constructor(frames, activeFrame, speed) {
 		this.frames = frames;
 		this.speed = speed;
 
 		this.frame = {
 			index: 0,
-			data: activeFrame
+			data: activeFrame,
 		};
 	}
 
@@ -22,13 +20,13 @@ class AnimatedSprite {
 	update(dt, name) {
 		this.frame.index += this.speed * dt;
 
-		if (name && this.directional) {
+		if (name && Object.keys(this.frames).length > 0) {
 			this.frame.data = this.frames[name];
 		}
 	}
 
 	get frameName() {
-		return this.frame.data.name.replace("{index}", this._getCurrentFrameIndex());
+		return this.frame.data.name.replace('{index}', this._getCurrentFrameIndex());
 	}
 }
 

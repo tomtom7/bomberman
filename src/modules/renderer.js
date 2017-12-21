@@ -1,14 +1,9 @@
-import Grid from "./grid"
-import spritesJSON from './../images/sprites.json';
-
-let canvas = document.getElementById("game-canvas");
-let ctx = canvas.getContext("2d");
+import { canvas, ctx, tileScale } from './constants';
 
 class Renderer {
-
-	constructor(options, resources) {
-		this.grid = new Grid(options, canvas);
+	constructor(resources, spritesData) {
 		this.resources = resources;
+		this.spritesData = spritesData;
 	}
 
 	_clearCanvas() {
@@ -19,7 +14,7 @@ class Renderer {
 		ctx.beginPath();
 		ctx.lineWidth = 0.15;
 		ctx.strokeStyle = '#000000';
-		for (let x = 0; x <= canvas.width; x += this.grid.options.tileScale) {
+		for (let x = 0; x <= canvas.width; x += tileScale) {
 			ctx.moveTo(x, 0);
 			ctx.lineTo(x, canvas.height);
 		}
@@ -27,7 +22,7 @@ class Renderer {
 		ctx.stroke();
 
 		ctx.beginPath();
-		for (let y = 0; y <= canvas.height; y += this.grid.options.tileScale) {
+		for (let y = 0; y <= canvas.height; y += tileScale) {
 			ctx.moveTo(0, y);
 			ctx.lineTo(canvas.width, y);
 		}
@@ -35,7 +30,7 @@ class Renderer {
 	}
 
 	_drawEntity(entity) {
-		let sprite = this._getFrame(entity.sprite.frameName);
+		const sprite = this._getFrame(entity.sprite.frameName);
 		ctx.drawImage(this.resources.sprites, sprite.x, sprite.y, sprite.w, sprite.h, entity.x, entity.y, entity.w, entity.h);
 	}
 
@@ -44,17 +39,17 @@ class Renderer {
 	}
 
 	_getFrame(frameName) {
-		return spritesJSON.frames[frameName].frame;
+		return this.spritesData.frames[frameName].frame;
 	}
 
-	render() {
+	render(grid) {
 		this._clearCanvas();
 		this._drawGrid();
-		this._drawEntities(this.grid.blocks);
-		this._drawEntities(this.grid.player.bombs);
-		this._drawEntities(this.grid.player.explosions);
-		this._drawEntity(this.grid.player);
+		this._drawEntities(grid.blocks);
+		this._drawEntities(grid.player.bombs);
+		this._drawEntities(grid.player.explosions);
+		this._drawEntity(grid.player);
 	}
 }
 
-export default Renderer
+export default Renderer;
