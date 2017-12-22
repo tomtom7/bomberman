@@ -9,6 +9,10 @@ class Block {
 		this.collideable = collideable;
 	}
 
+	isValid(blocks) {
+		return this.isValidPosition() && !this.collidesWithTerrainBlocks(blocks);
+	}
+
 	isValidPosition() {
 		return this.x >= 0 &&
             this.x <= canvas.width - this.w &&
@@ -20,12 +24,16 @@ class Block {
 		return this.x == x && this.y == y;
 	}
 
-	collides(otherBlock) {
-		return otherBlock.collideable &&
-			this.x < otherBlock.x + otherBlock.w &&
-			this.x + this.w > otherBlock.x &&
-			this.y < otherBlock.y + otherBlock.h &&
-			this.y + this.h > otherBlock.y;
+	collidesWithTerrainBlocks(blocks) {
+		return blocks.some(block => this.collides(block));
+	}
+
+	collides(block) {
+		return block.collideable &&
+			this.x < block.x + block.w &&
+			this.x + this.w > block.x &&
+			this.y < block.y + block.h &&
+			this.y + this.h > block.y;
 	}
 }
 

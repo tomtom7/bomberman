@@ -70,28 +70,28 @@ class MoveHandler {
 	_checkLeftMovement(dt) {
 		const newX = this.player.x - distanceTravelled(dt);
 
-		if (this._isLeft() && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h, true)) {
+		if (this._isLeft() && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
 			this.player.x = newX;
 		}
 	}
 
 	_checkRightMovement(dt) {
 		const newX = this.player.x + distanceTravelled(dt);
-		if (this._isRight() && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h, true)) {
+		if (this._isRight() && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
 			this.player.x = newX;
 		}
 	}
 
 	_checkUpMovement(dt) {
 		const newY = this.player.y - distanceTravelled(dt);
-		if (this._isUp() && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h, true)) {
+		if (this._isUp() && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
 			this.player.y = newY;
 		}
 	}
 
 	_checkDownMovement(dt) {
 		const newY = this.player.y + distanceTravelled(dt);
-		if (this._isDown() && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h, true)) {
+		if (this._isDown() && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
 			this.player.y = newY;
 		}
 	}
