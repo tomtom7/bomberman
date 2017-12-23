@@ -9,8 +9,8 @@ class Block {
 		this.collideable = collideable;
 	}
 
-	isValid(blocks) {
-		return this.isValidPosition() && !this.collidesWithTerrainBlocks(blocks);
+	isValid(terrainBlocks) {
+		return this.isValidPosition() && !this.collidesWithTerrainBlocks(terrainBlocks);
 	}
 
 	isValidPosition() {
@@ -24,8 +24,8 @@ class Block {
 		return this.x == x && this.y == y;
 	}
 
-	collidesWithTerrainBlocks(blocks) {
-		return blocks.some(block => this.collides(block));
+	collidesWithTerrainBlocks(terrainBlocks) {
+		return terrainBlocks.some(terrainBlock => this.collides(terrainBlock));
 	}
 
 	collides(block) {

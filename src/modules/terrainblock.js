@@ -1,22 +1,38 @@
 import Block from './block';
 import Sprite from './sprite';
-import { tileScale } from './constants';
+import { tileScale, terrainBlocks } from './constants';
 
 class TerrainBlock extends Block {
-	constructor(x, y, collideable, explodable, spriteName) {
-		super(x * tileScale, y * tileScale, tileScale, tileScale, collideable);
-		this.explodable = explodable;
-		this.sprite = new Sprite(spriteName);
+	constructor(x, y, block) {
+		super(x * tileScale, y * tileScale, tileScale, tileScale, block.collideable);
+		this.type = block.type;
+		this.sprite = new Sprite(block.spriteName);
 	}
 
-	update(spriteName, collideable, explodable) {
-		this.sprite = new Sprite(spriteName);
-		this.collideable = collideable;
-		this.explodable = explodable;
+	_isType(type) {
+		return this.type == type;
+	}
+
+	update(block) {
+		this.sprite = new Sprite(block.spriteName);
+		this.type = block.type
+		this.collideable = block.collideable;
 	}
 
 	canExplode(explosion) {
-		return this.explodable && explosion.isSameBlock(this.x, this.y);
+		return this.type != terrainBlocks.solid.type && explosion.isSameBlock(this.x, this.y);
+	}
+
+	isEmpty() {
+		return this._isType(terrainBlocks.empty.type);
+	}
+
+	isSolid() {
+		return this._isType(terrainBlocks.solid.type);
+	}
+
+	isSoft() {
+		return this._isType(terrainBlocks.soft.type);
 	}
 }
 

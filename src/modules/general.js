@@ -1,45 +1,71 @@
 import TerrainBlock from './terrainblock';
 import Explosion from './explosion';
-import { canvas, spriteMap, tileScale, speed } from './constants';
+import { canvas, terrainBlocks, tileScale, speed, powerUpChance } from './constants';
 
 export function getClosestDivisible(value, divisble) {
 	return Math.floor(value / divisble) * divisble;
 }
 
-export function createBlocks() {
+export function createTerrainBlocks() {
 	const blocks = [];
 	const values = [1, 3, 5, 7, 9, 11];
 
 	for (let x = 0; x <= canvas.width / tileScale; x += 1) {
 		for (let y = 0; y <= canvas.height / tileScale; y += 1) {
 			if ((x < 3 && y == 0) || (y < 3 && x == 0)) {
-				blocks.push(new TerrainBlock(x, y, false, true, spriteMap.terrain.empty));
+				blocks.push(new TerrainBlock(x, y, terrainBlocks.empty));
 			} else if (values.includes(y) && values.includes(x)) {
-				blocks.push(new TerrainBlock(x, y, true, false, spriteMap.terrain.solid));
+				blocks.push(new TerrainBlock(x, y, terrainBlocks.solid));
 			} else {
-				blocks.push(new TerrainBlock(x, y, true, true, spriteMap.terrain.soft));
+				blocks.push(new TerrainBlock(x, y, terrainBlocks.soft));
 			}
 		}
 	}
 	return blocks;
 }
 
-export function distanceTravelled(dt) {
-	return speed * dt;
+export function distanceTravelled(dt, playerSpeed) {
+	return (speed * dt) + playerSpeed;
 }
 
-export function createExplosions(bomb, blocks) {
+export function createExplosions(bomb, terrainBlocks, explosionMagnitude) {
 	const explosions = [];
 	const x = bomb.x - bomb.offset.x;
 	const y = bomb.y - bomb.offset.y;
+	const explosionRadius = tileScale * explosionMagnitude;
 
-	for (let i = x - tileScale; i <= x + tileScale; i += tileScale) {
-		explosions.push(new Explosion(i, y));
+	const filteredTerrainBlocks = terrainBlocks.filter(terrainBlock =>
+		!terrainBlock.isSolid() &&
+		terrainBlock.x >= x - explosionRadius &&
+		terrainBlock.x <= x + explosionRadius &&
+		terrainBlock.y >= y - explosionRadius &&
+		terrainBlock.y <= y + explosionRadius
+	);
+
+	for (let i = x - explosionRadius; i <= x + explosionRadius; i += tileScale) {
+		const e = new Explosion(i, y);
+
+		if (e.isValidPosition() && filteredTerrainBlocks.some(terrainBlock => terrainBlock.canExplode(e))) {
+			explosions.push(e);
+		}
 	}
 
-	for (let j = y - tileScale; j <= y + tileScale; j += tileScale) {
-		explosions.push(new Explosion(x, j));
+	for (let j = y - explosionRadius; j <= y + explosionRadius; j += tileScale) {
+		const e = new Explosion(x, j);
+
+		if (e.isValidPosition()  && filteredTerrainBlocks.some(terrainBlock => terrainBlock.canExplode(e))) {
+			explosions.push(e);
+		}
+	
 	}
 
-	return explosions.filter(e => e.isValidPosition() && blocks.some(terrainBlock => terrainBlock.canExplode(e)));
+	return explosions;
+}
+
+export function shouldSpawnPowerUp() {
+	return Math.random() <= powerUpChance;
+}
+
+export function getRandomIndex(max) {
+	return Math.floor(Math.random() * max);
 }

@@ -1,6 +1,12 @@
-const canvas = document.getElementById('game-canvas');
-const ctx = canvas.getContext('2d');
-const spriteMap = {
+export const canvas = document.getElementById('game-canvas');
+export const ctx = canvas.getContext('2d');
+export const tileScale = 64;
+export const speed = 300;
+export const powerUpChance = 0.9;
+export const powerUpTime = 10000;
+export const explosionDelay = 2000;
+export const bombDestructionDelay = 3000;
+export const spriteMap = {
 	player: {
 		down: {
 			name: 'Front/b_front_{index}.png',
@@ -32,9 +38,43 @@ const spriteMap = {
 		name: 'flame_{index}.png',
 		count: 5,
 	},
+	powerUp: {
+		bomb: "bomb.png",
+		speed: "speed.png",
+		flame: "flame.png",
+	}
 };
-
-const tileScale = 64;
-const speed = 300;
-
-export { canvas, ctx, spriteMap, tileScale, speed };
+export const powerUps = [
+	{ 
+		type: "maxBombCount",
+		spriteName: spriteMap.powerUp.bomb,
+		value: 1
+	},
+	{ 
+		type: "speed",
+		spriteName: spriteMap.powerUp.speed,
+		value: 2
+	},
+	{ 
+		type: "explosionMagnitude",
+		spriteName: spriteMap.powerUp.flame,
+		value: 1
+	}
+];
+export const terrainBlocks = {
+	soft: {
+		type: "soft",
+		spriteName: spriteMap.terrain.soft,
+		collideable: true,
+	},
+	solid: {
+		type: "solid",
+		spriteName: spriteMap.terrain.solid,
+		collideable: true,
+	},
+	empty: {
+		type: "empty",
+		spriteName: spriteMap.terrain.empty,
+		collideable: false,
+	}
+};

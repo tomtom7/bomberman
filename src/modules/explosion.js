@@ -7,12 +7,6 @@ class Explosion extends OffsetBlock {
 		super(x, y, { x: 8, y: 8 }, 48, 48, true);
 		this.sprite = new AnimatedSprite({}, spriteMap.explosion, 8);
 	}
-
-	process(block) {
-		if (this.isSameBlock(block.x, block.y)) {
-			block.update(spriteMap.terrain.empty, false, true);
-		}
-	}
 }
 
 export default Explosion;

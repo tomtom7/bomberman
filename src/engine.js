@@ -20,6 +20,9 @@ class Engine {
 
 		this.moveHandler.handlePlayerInput(dt, this.grid.player);
 		this.moveHandler.updateAnimations(dt);
+		this.grid.player.checkExplosions();
+		this.grid.checkPowerUps();
+
 		this.renderer.render(this.grid);
 		this.lastTime = currentTime;
 

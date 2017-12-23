@@ -68,7 +68,7 @@ class MoveHandler {
 	}
 
 	_checkLeftMovement(dt) {
-		const newX = this.player.x - distanceTravelled(dt);
+		const newX = this.player.x - distanceTravelled(dt, this.player.speed);
 
 		if (this._isLeft() && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
 			this.player.x = newX;
@@ -76,21 +76,21 @@ class MoveHandler {
 	}
 
 	_checkRightMovement(dt) {
-		const newX = this.player.x + distanceTravelled(dt);
+		const newX = this.player.x + distanceTravelled(dt, this.player.speed);
 		if (this._isRight() && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
 			this.player.x = newX;
 		}
 	}
 
 	_checkUpMovement(dt) {
-		const newY = this.player.y - distanceTravelled(dt);
+		const newY = this.player.y - distanceTravelled(dt, this.player.speed);
 		if (this._isUp() && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
 			this.player.y = newY;
 		}
 	}
 
 	_checkDownMovement(dt) {
-		const newY = this.player.y + distanceTravelled(dt);
+		const newY = this.player.y + distanceTravelled(dt, this.player.speed);
 		if (this._isDown() && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
 			this.player.y = newY;
 		}
@@ -104,6 +104,7 @@ class MoveHandler {
 
 	_checkBombPlant() {
 		if (this._isBombPlant() && this.player.canPlantBomb()) {
+			this.actions = [];
 			this.grid.addBomb();
 		}
 	}
@@ -117,7 +118,7 @@ class MoveHandler {
 	}
 
 	updateAnimations(dt) {
-		if (this.directions.length > 0) {
+		if (this.directions.length > 0 && !this.player.dead) {
 			this.player.sprite.update(dt, this.directions[0]);
 		}
 
