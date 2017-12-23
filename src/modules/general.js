@@ -42,21 +42,49 @@ export function createExplosions(bomb, terrainBlocks, explosionMagnitude) {
 		terrainBlock.y <= y + explosionRadius
 	);
 
-	for (let i = x - explosionRadius; i <= x + explosionRadius; i += tileScale) {
+	//Adds explosions to every direction, stops the explosion if solid block is in the way.
+	//add explosions center to right;
+	for (let i = x; i <= x + explosionRadius; i += tileScale) {
 		const e = new Explosion(i, y);
 
-		if (e.isValidPosition() && filteredTerrainBlocks.some(terrainBlock => terrainBlock.canExplode(e))) {
+		if (e.isValidPosition() && filteredTerrainBlocks.some(terrainBlock => terrainBlock.hasExplodeEffect(e))) {
 			explosions.push(e);
+		} else {
+			break;
 		}
 	}
 
-	for (let j = y - explosionRadius; j <= y + explosionRadius; j += tileScale) {
+	//add explosions center to left
+	for (let i = x; i >= x - explosionRadius; i -= tileScale) {
+		const e = new Explosion(i, y);
+
+		if (e.isValidPosition() && filteredTerrainBlocks.some(terrainBlock => terrainBlock.hasExplodeEffect(e))) {
+			explosions.push(e);
+		} else {
+			break;
+		}
+	}
+
+	//add explosions center to down
+	for (let j = y; j <= y + explosionRadius; j += tileScale) {
 		const e = new Explosion(x, j);
 
-		if (e.isValidPosition()  && filteredTerrainBlocks.some(terrainBlock => terrainBlock.canExplode(e))) {
+		if (e.isValidPosition() && filteredTerrainBlocks.some(terrainBlock => terrainBlock.hasExplodeEffect(e))) {
 			explosions.push(e);
+		} else {
+			break;
 		}
-	
+	}
+
+	//add explosions center to up;
+	for (let j = y; j >= y - explosionRadius; j -= tileScale) {
+		const e = new Explosion(x, j);
+
+		if (e.isValidPosition() && filteredTerrainBlocks.some(terrainBlock => terrainBlock.hasExplodeEffect(e))) {
+			explosions.push(e);
+		} else {
+			break;
+		}
 	}
 
 	return explosions;

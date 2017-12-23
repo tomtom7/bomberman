@@ -1,12 +1,14 @@
 import Player from './player';
+import Creep from './creep';
 import Block from './block';
 import PowerUp from './powerup';
 import { createTerrainBlocks, shouldSpawnPowerUp, getRandomIndex } from './general';
-import { spriteMap, powerUps, explosionDelay, bombDestructionDelay, terrainBlocks } from './constants';
+import { powerUps, explosionDelay, bombDestructionDelay, terrainBlocks, respawnDelay } from './constants';
 
 class Grid {
 	constructor() {
 		this.player = new Player(16, 0);
+		this.creep = new Creep(64, 0);
 		this.terrainBlocks = createTerrainBlocks();
 		this.powerUps = [];
 	}
@@ -22,10 +24,13 @@ class Grid {
 	}
 
 	updateGrid() {
+		this.checkPowerupExplosions();
+
 		const softTerrainBlocks = this.terrainBlocks.filter(terrainBlock => terrainBlock.isSoft());
 		softTerrainBlocks.forEach(terrainBlock => {
 			this.player.explosions.forEach(explosion => this.processExplosion(explosion, terrainBlock));
 		});
+
 		this.player.removeExplosions();
 	}
 
@@ -34,6 +39,12 @@ class Grid {
 			terrainBlock.update(terrainBlocks.empty);
 			this.spawnPowerUp(terrainBlock);
 		}
+	}
+
+	checkPowerupExplosions() {
+		this.powerUps = this.powerUps.filter(powerup =>
+			!this.player.explosions.some(e => e.isSameBlock(powerup.x - powerup.offset.x, powerup.y - powerup.offset.y))
+		);
 	}
 
 	spawnPowerUp(terrainBlock) {
@@ -50,11 +61,19 @@ class Grid {
 	}
 
 	checkPowerUps() {
-		const powerUps = this.powerUps.filter(powerup => this.player.isSameBlock(powerup));
-		
-		if (powerUps.length > 0) {
-			powerUps.forEach(p => this.player.addPowerUp(p));
+		const filteredPowerUps = this.powerUps.filter(powerup => this.player.isSameBlock(powerup));
+
+		if (filteredPowerUps.length > 0) {
+			filteredPowerUps.forEach(p => this.player.addPowerUp(p));
 			this.powerUps = this.powerUps.filter(powerup => !this.player.isSameBlock(powerup));
+		}
+	}
+
+	checkExplosions() {
+		const closestBlock = this.player.getClosestBlock();
+		if (this.player.explosions.some(e => e.isSameBlock(closestBlock[0], closestBlock[1]))) {
+			this.player.dead = true;
+			setTimeout(() => this.player.respawn(), respawnDelay);
 		}
 	}
 }

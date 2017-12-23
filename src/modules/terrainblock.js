@@ -19,8 +19,8 @@ class TerrainBlock extends Block {
 		this.collideable = block.collideable;
 	}
 
-	canExplode(explosion) {
-		return this.type != terrainBlocks.solid.type && explosion.isSameBlock(this.x, this.y);
+	hasExplodeEffect(explosion) {
+		return !this.isSolid() && explosion.isSameBlock(this.x, this.y);
 	}
 
 	isEmpty() {

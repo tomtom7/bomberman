@@ -6,6 +6,7 @@ export const powerUpChance = 0.9;
 export const powerUpTime = 10000;
 export const explosionDelay = 2000;
 export const bombDestructionDelay = 3000;
+export const respawnDelay = 1500;
 export const spriteMap = {
 	player: {
 		down: {
@@ -23,6 +24,24 @@ export const spriteMap = {
 		up: {
 			name: 'Back/b_back_{index}.png',
 			count: 8,
+		},
+	},
+	creep: {
+		down: {
+			name: 'Front/c_front_{index}.png',
+			count: 6,
+		},
+		right: {
+			name: 'Right/c_right_{index}.png',
+			count: 7,
+		},
+		left: {
+			name: 'Left/c_left_{index}.png',
+			count: 7,
+		},
+		up: {
+			name: 'Back/c_back_{index}.png',
+			count: 6,
 		},
 	},
 	terrain: {

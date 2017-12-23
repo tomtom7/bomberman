@@ -1,9 +1,8 @@
 import Block from './block';
 import Bomb from './bomb';
-import PowerUp from './powerup';
 import AnimatedSprite from './animatedsprite';
 import { getClosestDivisible, createExplosions } from './general';
-import { tileScale, spriteMap, powerUps, powerUpTime } from './constants';
+import { tileScale, spriteMap, powerUpTime } from './constants';
 
 class Player extends Block {
 	constructor(x = 0, y = 0) {
@@ -59,14 +58,6 @@ class Player extends Block {
 	isSameBlock(block) {
 		const closestBlock = this.getClosestBlock();
 		return block.isSameBlock(closestBlock[0], closestBlock[1]);
-	}
-
-	checkExplosions() {
-		const closestBlock = this.getClosestBlock();
-		if (this.explosions.some(e => e.isSameBlock(closestBlock[0], closestBlock[1]))) {
-			this.dead = true;
-			setTimeout(() => this.respawn(), 1500);
-		}
 	}
 
 	respawn() {
