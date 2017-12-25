@@ -1,4 +1,4 @@
-import { distanceTravelled } from './general';
+import { distanceTravelled, playerDistanceTravelled } from './general';
 
 class MoveHandler {
 	constructor(grid) {
@@ -68,30 +68,30 @@ class MoveHandler {
 	}
 
 	_checkLeftMovement(dt) {
-		const newX = this.player.x - distanceTravelled(dt, this.player.speed);
+		const newX = this.player.x - playerDistanceTravelled(dt, this.player.speed);
 
-		if (this._isLeft() && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
+		if (this._isLeft() && !this.grid.player.dead && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
 			this.player.x = newX;
 		}
 	}
 
 	_checkRightMovement(dt) {
-		const newX = this.player.x + distanceTravelled(dt, this.player.speed);
-		if (this._isRight() && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
+		const newX = this.player.x + playerDistanceTravelled(dt, this.player.speed);
+		if (this._isRight() && !this.grid.player.dead && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
 			this.player.x = newX;
 		}
 	}
 
 	_checkUpMovement(dt) {
-		const newY = this.player.y - distanceTravelled(dt, this.player.speed);
-		if (this._isUp() && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
+		const newY = this.player.y - playerDistanceTravelled(dt, this.player.speed);
+		if (this._isUp() && !this.grid.player.dead && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
 			this.player.y = newY;
 		}
 	}
 
 	_checkDownMovement(dt) {
-		const newY = this.player.y + distanceTravelled(dt, this.player.speed);
-		if (this._isDown() && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
+		const newY = this.player.y + playerDistanceTravelled(dt, this.player.speed);
+		if (this._isDown() && !this.grid.player.dead && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
 			this.player.y = newY;
 		}
 	}
@@ -124,6 +124,44 @@ class MoveHandler {
 
 		this.player.bombs.forEach(bomb => bomb.sprite.update(dt));
 		this.player.explosions.forEach(explosion => explosion.sprite.update(dt));
+	}
+
+	moveCreeps(dt) {
+		this.grid.creeps.forEach(creep => {
+			if (creep.direction == 'left') {
+				const newX = creep.x - distanceTravelled(dt);
+				if (this.grid.canMove(newX, creep.y, creep.w, creep.h)) {
+					creep.x = newX;
+				} else {
+					creep.setNewDirection();
+				}
+			}
+			if (creep.direction == 'right') {
+				const newX = creep.x + distanceTravelled(dt);
+				if (this.grid.canMove(newX, creep.y, creep.w, creep.h)) {
+					creep.x = newX;
+				} else {
+					creep.setNewDirection();
+				}
+			}
+			if (creep.direction == 'up') {
+				const newY = creep.y - distanceTravelled(dt);
+				if (this.grid.canMove(creep.x, newY, creep.w, creep.h)) {
+					creep.y = newY;
+				} else {
+					creep.setNewDirection();
+				}
+			}
+			if (creep.direction == 'down') {
+				const newY = creep.y + distanceTravelled(dt);
+				if (this.grid.canMove(creep.x, newY, creep.w, creep.h)) {
+					creep.y = newY;
+				} else {
+					creep.setNewDirection();
+				}
+			}
+			creep.sprite.update(dt, creep.direction);
+		});
 	}
 }
 

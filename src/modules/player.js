@@ -2,7 +2,7 @@ import Block from './block';
 import Bomb from './bomb';
 import AnimatedSprite from './animatedsprite';
 import { getClosestDivisible, createExplosions } from './general';
-import { tileScale, spriteMap, powerUpTime } from './constants';
+import { tileScale, spriteMap, powerUpTime, respawnDelay } from './constants';
 
 class Player extends Block {
 	constructor(x = 0, y = 0) {
@@ -36,6 +36,12 @@ class Player extends Block {
 		return bomb;
 	}
 
+	getClosestBlock() {
+		const x = getClosestDivisible(this.x, tileScale);
+		const y = getClosestDivisible(this.y, tileScale);
+		return [x, y];
+	}
+
 	canPlantBomb() {
 		return this.bombs.length < this.maxBombCount;
 	}
@@ -49,15 +55,9 @@ class Player extends Block {
 		this.bombs = this.bombs.filter(b => !Object.is(bomb, b));
 	}
 
-	getClosestBlock() {
-		const x = getClosestDivisible(this.x, tileScale);
-		const y = getClosestDivisible(this.y, tileScale);
-		return [x, y];
-	}
-
-	isSameBlock(block) {
-		const closestBlock = this.getClosestBlock();
-		return block.isSameBlock(closestBlock[0], closestBlock[1]);
+	die() {
+		this.dead = true;
+		setTimeout(() => this.respawn(), respawnDelay);
 	}
 
 	respawn() {

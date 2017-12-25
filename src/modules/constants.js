@@ -1,12 +1,16 @@
 export const canvas = document.getElementById('game-canvas');
 export const ctx = canvas.getContext('2d');
 export const tileScale = 64;
-export const speed = 300;
-export const powerUpChance = 0.9;
+export const playerBaseSpeed = 300;
+export const creepBaseSpeed = 125;
+export const powerUpChance = 0.15;
+export const creepPerTerrainBlocks = 10;
+export const creepSpawnInterval = 3000;
 export const powerUpTime = 10000;
-export const explosionDelay = 2000;
-export const bombDestructionDelay = 3000;
-export const respawnDelay = 1500;
+export const explosionDelay = 1000;
+export const bombDestructionDelay = 2000;
+export const respawnDelay = 500;
+export const directions = ['left', 'right', 'up', 'down'];
 export const spriteMap = {
 	player: {
 		down: {
@@ -58,42 +62,42 @@ export const spriteMap = {
 		count: 5,
 	},
 	powerUp: {
-		bomb: "bomb.png",
-		speed: "speed.png",
-		flame: "flame.png",
-	}
+		bomb: 'bomb.png',
+		speed: 'speed.png',
+		flame: 'flame.png',
+	},
 };
 export const powerUps = [
-	{ 
-		type: "maxBombCount",
+	{
+		type: 'maxBombCount',
 		spriteName: spriteMap.powerUp.bomb,
-		value: 1
+		value: 1,
 	},
-	{ 
-		type: "speed",
+	{
+		type: 'speed',
 		spriteName: spriteMap.powerUp.speed,
-		value: 2
+		value: 1,
 	},
-	{ 
-		type: "explosionMagnitude",
+	{
+		type: 'explosionMagnitude',
 		spriteName: spriteMap.powerUp.flame,
-		value: 1
-	}
+		value: 1,
+	},
 ];
 export const terrainBlocks = {
 	soft: {
-		type: "soft",
+		type: 'soft',
 		spriteName: spriteMap.terrain.soft,
 		collideable: true,
 	},
 	solid: {
-		type: "solid",
+		type: 'solid',
 		spriteName: spriteMap.terrain.solid,
 		collideable: true,
 	},
 	empty: {
-		type: "empty",
+		type: 'empty',
 		spriteName: spriteMap.terrain.empty,
 		collideable: false,
-	}
+	},
 };

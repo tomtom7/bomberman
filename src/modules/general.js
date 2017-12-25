@@ -1,6 +1,6 @@
 import TerrainBlock from './terrainblock';
 import Explosion from './explosion';
-import { canvas, terrainBlocks, tileScale, speed, powerUpChance } from './constants';
+import { canvas, terrainBlocks, tileScale, playerBaseSpeed, creepBaseSpeed, powerUpChance } from './constants';
 
 export function getClosestDivisible(value, divisble) {
 	return Math.floor(value / divisble) * divisble;
@@ -24,17 +24,21 @@ export function createTerrainBlocks() {
 	return blocks;
 }
 
-export function distanceTravelled(dt, playerSpeed) {
-	return (speed * dt) + playerSpeed;
+export function playerDistanceTravelled(dt, playerSpeed) {
+	return (playerBaseSpeed * dt) + playerSpeed;
 }
 
-export function createExplosions(bomb, terrainBlocks, explosionMagnitude) {
+export function distanceTravelled(dt) {
+	return creepBaseSpeed * dt;
+}
+
+export function createExplosions(bomb, blocks, explosionMagnitude) {
 	const explosions = [];
 	const x = bomb.x - bomb.offset.x;
 	const y = bomb.y - bomb.offset.y;
 	const explosionRadius = tileScale * explosionMagnitude;
 
-	const filteredTerrainBlocks = terrainBlocks.filter(terrainBlock =>
+	const filteredTerrainBlocks = blocks.filter(terrainBlock =>
 		!terrainBlock.isSolid() &&
 		terrainBlock.x >= x - explosionRadius &&
 		terrainBlock.x <= x + explosionRadius &&

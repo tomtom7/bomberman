@@ -18,11 +18,10 @@ class Engine {
 		const currentTime = Date.now();
 		const dt = (currentTime - this.lastTime) / 1000;
 
-		this.moveHandler.handlePlayerInput(dt, this.grid.player);
+		this.moveHandler.handlePlayerInput(dt);
+		this.moveHandler.moveCreeps(dt);
 		this.moveHandler.updateAnimations(dt);
-		this.grid.checkExplosions();
-		this.grid.checkPowerUps();
-
+		this.grid.checkCollisions();
 		this.renderer.render(this.grid);
 		this.lastTime = currentTime;
 

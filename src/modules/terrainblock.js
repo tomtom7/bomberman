@@ -15,12 +15,12 @@ class TerrainBlock extends Block {
 
 	update(block) {
 		this.sprite = new Sprite(block.spriteName);
-		this.type = block.type
+		this.type = block.type;
 		this.collideable = block.collideable;
 	}
 
 	hasExplodeEffect(explosion) {
-		return !this.isSolid() && explosion.isSameBlock(this.x, this.y);
+		return !this.isSolid() && this.collides(explosion);
 	}
 
 	isEmpty() {

@@ -99,7 +99,7 @@
 	"sourceSize": {"w":64,"h":64},
 	"pivot": {"x":0.5,"y":0.5}
 },
-"Back/c_back_3_.png":
+"Back/c_back_3.png":
 {
 	"frame": {"x":160,"y":181,"w":51,"h":50},
 	"rotated": false,
@@ -655,6 +655,6 @@
 	"format": "RGBA8888",
 	"size": {"w":252,"h":1202},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:c9a5724bd41d8f6568ef62107564eb1c:19433b4b89e44fd070bc55c98f210fa7:1eabdf11f75e3a4fe3147baf7b5be24b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:f6bcbd495ffaeab97e941e78a873902a:19433b4b89e44fd070bc55c98f210fa7:1eabdf11f75e3a4fe3147baf7b5be24b$"
 }
 }

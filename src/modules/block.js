@@ -20,10 +20,6 @@ class Block {
             this.y <= canvas.height - this.h;
 	}
 
-	isSameBlock(x, y) {
-		return this.x == x && this.y == y;
-	}
-
 	collidesWithTerrainBlocks(terrainBlocks) {
 		return terrainBlocks.some(terrainBlock => this.collides(terrainBlock));
 	}

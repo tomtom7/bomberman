@@ -48,7 +48,7 @@ class Renderer {
 		this._drawEntities(grid.terrainBlocks);
 		this._drawEntities(grid.player.bombs);
 		this._drawEntity(grid.player);
-		this._drawEntity(grid.creep);
+		this._drawEntities(grid.creeps);
 		this._drawEntities(grid.powerUps);
 		this._drawEntities(grid.player.explosions);
 	}
