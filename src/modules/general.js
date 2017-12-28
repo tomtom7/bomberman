@@ -1,24 +1,38 @@
 import TerrainBlock from './terrainblock';
 import Explosion from './explosion';
-import { canvas, terrainBlocks, tileScale, playerBaseSpeed, creepBaseSpeed, powerUpChance } from './constants';
+import { canvas, blockTypes, tileScale, playerBaseSpeed, creepBaseSpeed, powerUpChance, deathBlinkFrequency } from './constants';
 
 export function getClosestDivisible(value, divisble) {
 	return Math.floor(value / divisble) * divisble;
 }
 
+export function getDeathBlinkInterval() {
+	return Math.floor(Date.now() / deathBlinkFrequency) % 2;
+}
+
 export function createTerrainBlocks() {
 	const blocks = [];
-	const values = [1, 3, 5, 7, 9, 11];
 
-	for (let x = 0; x <= canvas.width / tileScale; x += 1) {
-		for (let y = 0; y <= canvas.height / tileScale; y += 1) {
-			if ((x < 3 && y == 0) || (y < 3 && x == 0)) {
-				blocks.push(new TerrainBlock(x, y, terrainBlocks.empty));
-			} else if (values.includes(y) && values.includes(x)) {
-				blocks.push(new TerrainBlock(x, y, terrainBlocks.solid));
-			} else {
-				blocks.push(new TerrainBlock(x, y, terrainBlocks.soft));
-			}
+	const gridBlocks = [
+		[0, 0, 0, 1, 1, 2, 1, 1 ,1, 1, 1],
+		[0, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1],
+		[0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 1],
+		[1, 2, 0, 1, 1, 1, 1, 1, 0, 2, 1],
+		[1, 1, 0, 2, 1, 1, 1, 2, 0, 1, 1],
+		[1, 1, 0, 1, 1, 2, 1, 1, 0, 1, 1],
+		[2, 2, 0, 1, 2, 2, 2, 1, 0, 2, 2],
+		[1, 1, 0, 1, 1, 2, 1, 1, 0, 1, 1],
+		[1, 1, 0, 2, 1, 1, 1, 2, 0, 1, 1],
+		[1, 2, 0, 1, 1, 1, 1, 1, 0, 2, 1],
+		[1, 2, 0, 0, 0, 0, 0, 0, 0, 2, 1],
+		[1, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1],
+		[1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1],
+	]
+
+	for (let x = 0; x < gridBlocks.length; x+= 1) {
+		for (let y = 0; y < gridBlocks[x].length; y += 1) {
+			const blockType = gridBlocks[x][y];
+			blocks.push(new TerrainBlock(x, y, blockTypes[blockType]));
 		}
 	}
 	return blocks;

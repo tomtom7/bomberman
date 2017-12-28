@@ -1,4 +1,5 @@
 import { canvas, ctx, tileScale } from './constants';
+import { getDeathBlinkInterval } from './general';
 
 class Renderer {
 	constructor(resources, spritesData) {
@@ -8,25 +9,6 @@ class Renderer {
 
 	_clearCanvas() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-	}
-
-	_drawGrid() {
-		ctx.beginPath();
-		ctx.lineWidth = 0.15;
-		ctx.strokeStyle = '#000000';
-		for (let x = 0; x <= canvas.width; x += tileScale) {
-			ctx.moveTo(x, 0);
-			ctx.lineTo(x, canvas.height);
-		}
-
-		ctx.stroke();
-
-		ctx.beginPath();
-		for (let y = 0; y <= canvas.height; y += tileScale) {
-			ctx.moveTo(0, y);
-			ctx.lineTo(canvas.width, y);
-		}
-		ctx.stroke();
 	}
 
 	_drawEntity(entity) {
@@ -44,10 +26,13 @@ class Renderer {
 
 	render(grid) {
 		this._clearCanvas();
-		this._drawGrid();
 		this._drawEntities(grid.terrainBlocks);
 		this._drawEntities(grid.player.bombs);
-		this._drawEntity(grid.player);
+
+		if (!grid.player.dead || getDeathBlinkInterval()) {
+    	this._drawEntity(grid.player);
+	  }
+
 		this._drawEntities(grid.creeps);
 		this._drawEntities(grid.powerUps);
 		this._drawEntities(grid.player.explosions);

@@ -19,7 +19,6 @@ class MoveHandler {
 			32: 'bomb',
 		};
 		this.directions = [];
-		this.actions = [];
 	}
 
 	_isUp() {
@@ -42,16 +41,12 @@ class MoveHandler {
 		return this.directions.includes(direction);
 	}
 
-	_isBombPlant() {
-		return this.actions.includes('bomb');
-	}
-
 	_saveKey(e) {
 		const action = this.keyMap[e.keyCode];
 
-		if (action == 'bomb') {
-			this.actions.push(action);
-		} else if (action && !this._isDirection(action)) {
+		if (action == 'bomb' && this.player.canPlantBomb()) {
+			this.grid.addBomb();
+		} else if (action != 'bomb' && !this._isDirection(action)) {
 			this.directions.push(action);
 		}
 	}
@@ -60,38 +55,34 @@ class MoveHandler {
 		if (this.directions.length > 0) {
 			this.directions = this.directions.filter(d => d !== this.keyMap[e.keyCode]);
 		}
-
-		if (this.actions.length > 0) {
-			this.actions = this.actions.filter(d => d !== this.keyMap[e.keyCode]);
-		}
 		this.grid.player.sprite.reset();
 	}
 
 	_checkLeftMovement(dt) {
 		const newX = this.player.x - playerDistanceTravelled(dt, this.player.speed);
 
-		if (this._isLeft() && !this.grid.player.dead && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
+		if (this._isLeft() && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
 			this.player.x = newX;
 		}
 	}
 
 	_checkRightMovement(dt) {
 		const newX = this.player.x + playerDistanceTravelled(dt, this.player.speed);
-		if (this._isRight() && !this.grid.player.dead && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
+		if (this._isRight() && this.grid.canMove(newX, this.player.y, this.player.w, this.player.h)) {
 			this.player.x = newX;
 		}
 	}
 
 	_checkUpMovement(dt) {
 		const newY = this.player.y - playerDistanceTravelled(dt, this.player.speed);
-		if (this._isUp() && !this.grid.player.dead && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
+		if (this._isUp() && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
 			this.player.y = newY;
 		}
 	}
 
 	_checkDownMovement(dt) {
 		const newY = this.player.y + playerDistanceTravelled(dt, this.player.speed);
-		if (this._isDown() && !this.grid.player.dead && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
+		if (this._isDown() && this.grid.canMove(this.player.x, newY, this.player.w, this.player.h)) {
 			this.player.y = newY;
 		}
 	}
@@ -102,19 +93,14 @@ class MoveHandler {
 		}
 	}
 
-	_checkBombPlant() {
-		if (this._isBombPlant() && this.player.canPlantBomb()) {
-			this.actions = [];
-			this.grid.addBomb();
-		}
-	}
-
 	handlePlayerInput(dt) {
+		if (this.grid.player.dead) {
+			return;
+		}
 		this._checkUpMovement(dt);
 		this._checkLeftMovement(dt);
 		this._checkRightMovement(dt);
 		this._checkDownMovement(dt);
-		this._checkBombPlant();
 	}
 
 	updateAnimations(dt) {
@@ -129,39 +115,28 @@ class MoveHandler {
 	moveCreeps(dt) {
 		this.grid.creeps.forEach(creep => {
 			if (creep.direction == 'left') {
-				const newX = creep.x - distanceTravelled(dt);
-				if (this.grid.canMove(newX, creep.y, creep.w, creep.h)) {
-					creep.x = newX;
-				} else {
-					creep.setNewDirection();
-				}
+				this.moveCreep(creep.x - distanceTravelled(dt), creep.y, creep);
 			}
 			if (creep.direction == 'right') {
-				const newX = creep.x + distanceTravelled(dt);
-				if (this.grid.canMove(newX, creep.y, creep.w, creep.h)) {
-					creep.x = newX;
-				} else {
-					creep.setNewDirection();
-				}
+				this.moveCreep(creep.x + distanceTravelled(dt), creep.y, creep);
 			}
 			if (creep.direction == 'up') {
-				const newY = creep.y - distanceTravelled(dt);
-				if (this.grid.canMove(creep.x, newY, creep.w, creep.h)) {
-					creep.y = newY;
-				} else {
-					creep.setNewDirection();
-				}
+				this.moveCreep(creep.x, creep.y - distanceTravelled(dt), creep);
 			}
 			if (creep.direction == 'down') {
-				const newY = creep.y + distanceTravelled(dt);
-				if (this.grid.canMove(creep.x, newY, creep.w, creep.h)) {
-					creep.y = newY;
-				} else {
-					creep.setNewDirection();
-				}
+				this.moveCreep(creep.x, creep.y + distanceTravelled(dt), creep);
 			}
 			creep.sprite.update(dt, creep.direction);
 		});
+	}
+
+	moveCreep(x, y, creep) {
+		if (this.grid.canMove(x, y, creep.w, creep.h)) {
+			creep.x = x;
+			creep.y = y;
+		} else {
+			creep.setNewDirection();
+		}
 	}
 }
 

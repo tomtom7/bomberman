@@ -2,8 +2,9 @@ import Grid from './modules/grid';
 import Renderer from './modules/renderer';
 import MoveHandler from './modules/movehandler';
 import ResourceLoader from './modules/resourceloader';
-import spritesPNG from './images/sprites.png';
-import spritesData from './images/sprites.json';
+import spritesPNG from './assets/sprites.png';
+import spritesData from './assets/sprites.json';
+import bgWAV from './assets/bg.wav';
 
 class Engine {
 	constructor(resources) {
@@ -11,6 +12,8 @@ class Engine {
 		this.renderer = new Renderer(resources, spritesData);
 		this.moveHandler = new MoveHandler(this.grid);
 		this.lastTime = Date.now();
+
+		resources.audio.play();
 		this.run();
 	}
 
@@ -29,12 +32,23 @@ class Engine {
 	}
 }
 
-const sources = {
-	sprites: spritesPNG,
-};
+const sources = [
+	{
+		type: 'image',
+		name: 'sprites',
+	  source: spritesPNG,
+	},
+	{
+		type: 'audio',
+		name: 'audio',
+		source: bgWAV,
+		loop: true,
+		volume: 0.2,
+	}
+];
 
 async function start() {
-	const resources = await ResourceLoader.load(sources);
+	const resources = await new ResourceLoader(sources).load();
 	new Engine(resources);
 }
 

@@ -7,7 +7,7 @@ import { tileScale, spriteMap, powerUpTime, respawnDelay } from './constants';
 class Player extends Block {
 	constructor(x = 0, y = 0) {
 		super(x, y, 31, 55, true);
-		this.sprite = new AnimatedSprite(spriteMap.player, spriteMap.player.down, 16);
+		this.sprite = new AnimatedSprite(spriteMap.player, spriteMap.player.down, spriteMap.player.animationSpeed);
 		this.bombs = [];
 		this.explosions = [];
 		this.speed = 0;
@@ -43,7 +43,7 @@ class Player extends Block {
 	}
 
 	canPlantBomb() {
-		return this.bombs.length < this.maxBombCount;
+		return !this.dead && this.bombs.length < this.maxBombCount;
 	}
 
 	removeExplosions() {
